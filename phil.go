@@ -19,24 +19,49 @@ type guy struct {
 func (g guy) eat() {
 	number := g.id
 
-	if(checkFork(g.forkright) && checkFork(g.forkleft)){
+	if(checkForkBoth(g.forkright, g.forkleft)){
 		fmt.Println(fmt.Sprint("guy number ", number, " is eating"))
-		time.Sleep(time.Second)
-		fmt.Println(fmt.Sprint("guy number ", number, " is done full"))
+		
+		resetforks(g.forkright, g.forkleft)
+
+				fmt.Println(fmt.Sprint("guy number ", number, " is full"))
 		g.forkleft.free <- true
 		g.forkright.free <- true		
+
 	} else {fmt.Println(fmt.Sprint("guy number ", number, " is thinking"))}
 }
 
-func  checkFork(forky *fork) bool{
-	forky.free <- forky.status
-	availabiliy := <- forky.free
-	
-	if(availabiliy){
-		forky.status=false
-	}
+func  checkForkBoth(forkyright *fork, forkyleft *fork) bool{
+	forkyright.free <- forkyright.status
+	availabiliyright := <- forkyright.free
 
-	return availabiliy
+	forkyleft.free <- forkyleft.status
+	availabiliyleft := <- forkyleft.free
+	
+	if(availabiliyright && !availabiliyleft){
+		forkyright.free <- true
+	}
+	if(availabiliyleft && !availabiliyright){
+		forkyright.free <- true
+	}
+	if(!availabiliyleft && !availabiliyright){
+		forkyright.free <- false
+		forkyleft.free <- false
+	}
+	if(availabiliyleft && availabiliyright){
+		forkyright.free <- false
+		forkyleft.free <- false
+		return true
+	}
+	return false
+}
+
+func resetforks(forkyright *fork, forkyleft *fork){
+	x1 := <- forkyright.free 
+	x2 := <- forkyleft.free 
+
+	fmt.Println(fmt.Sprint(x1, " and ", x2, " are now reset" ))
+
 }
 
 func main() {
@@ -65,7 +90,6 @@ func begin() {
 		for i := 0; i<3; i++{
 			for _, v := range guys {
 				go v.eat()
-				time.Sleep(time.Second)
 			}
 		}
 	}
