@@ -20,28 +20,22 @@ func (g guy) eat() {
 	number := g.id
 
 	if(checkFork(g.forkright) && checkFork(g.forkleft)){
-		fmt.Println("its working")
-	} else {fmt.Println("its not working")}
-
-	//checkFork(chright, chleft, g.forkright,g.forkleft)
-
-	//if checkbooking(g.forkleft.free) {
-		if(1==1){
 		fmt.Println(fmt.Sprint("guy number ", number, " is eating"))
-		
 		time.Sleep(time.Second)
-	} else {
-		fmt.Println(fmt.Sprint("guy number ", number, " is thinking"))
-		time.Sleep(time.Second)
-		return
-	}
-	//fmt.Println(fmt.Sprint("guy number ", number, " is done eating"))
+		fmt.Println(fmt.Sprint("guy number ", number, " is done full"))
+		g.forkleft.free <- true
+		g.forkright.free <- true		
+	} else {fmt.Println(fmt.Sprint("guy number ", number, " is thinking"))}
 }
-
 
 func  checkFork(forky *fork) bool{
 	forky.free <- forky.status
 	availabiliy := <- forky.free
+	
+	if(availabiliy){
+		forky.status=false
+	}
+
 	return availabiliy
 }
 
@@ -68,7 +62,10 @@ func begin() {
 		}
 		//makes sure every guy eats 3 times
 
-		for _, v := range guys {
-			go v.eat()
+		for i := 0; i<3; i++{
+			for _, v := range guys {
+				go v.eat()
+				time.Sleep(time.Second)
+			}
 		}
 	}
