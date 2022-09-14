@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"time"
-
 )
 
 type fork struct {
@@ -16,40 +15,40 @@ type guy struct {
 }
 
 func (g guy) eat() {
+	go checkfork(g.forkright, g.forkleft, g.id)
+}
 
-	statusr := <- g.forkright.status
-	statusl := <- g.forkleft.status
 
+func checkfork(forkyright *fork, forkyleft *fork, id int){
+	statusr := <- forkyright.status
+	statusl := <- forkyleft.status
 	if(!statusr && statusl){
-		g.forkleft.status <- true
-		g.forkright.status <- false	
+		forkyright.status <- true
+		forkyleft.status <- false	
 	}
 	if(!statusl && statusr){
-		g.forkleft.status <- false
-		g.forkright.status <- true	
+		forkyleft.status <- false
+		forkyright.status <- true	
 	}
 	if(!statusl && !statusr){
-		g.forkleft.status <- false
-		g.forkright.status <- false	
+		forkyleft.status <- false
+		forkyright.status <- false	
 	}
 	if(statusr && statusl){
-		g.forkleft.status <- false
-		g.forkright.status <- false
-		fmt.Println(fmt.Sprint("guy number ", g.id, " is eating"))
-		time.Sleep(time.Millisecond*5)
+		fmt.Println(fmt.Sprint("guy number ", id, " is eating"))
 		
-		fmt.Println(fmt.Sprint("guy number ", g.id, " is full"))	
-		g.forkleft.status <- true
-		g.forkright.status <- true
+		fmt.Println(fmt.Sprint("guy number ", id, " is full"))	
+		forkyleft.status <- true
+		forkyright.status <- true
 	} else {
-		fmt.Println(fmt.Sprint("guy number ", g.id, " is thinking"))
+		fmt.Println(fmt.Sprint("guy number ", id, " is thinking"))
 	}
 }
 
 
-
 func main() {
 	begin()
+	
 }
 
 func begin() {
@@ -76,7 +75,7 @@ func begin() {
 		for i := 0; i<3; i++{
 			for _, v := range guys {
 				go v.eat()
-				time.Sleep(time.Second)
+				time.Sleep(time.Millisecond)	
 				
 			}
 		}
