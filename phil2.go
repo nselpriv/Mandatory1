@@ -1,4 +1,4 @@
-package main
+// package main
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 )
 
 type fork struct {
-	id   int
+	id     int
 	status chan bool
 }
 type guy struct {
@@ -45,7 +45,6 @@ func checkfork(forkyright *fork, forkyleft *fork, id int){
 	}
 }
 
-
 func main() {
 	begin()
 	
@@ -56,21 +55,26 @@ func begin() {
 	forks := make([]*fork, 5)
 	for i := 0; i < 5; i++ {
 		forks[i] = &fork{
-			id: i, status: make(chan bool,2),
-		} }
-		for _, v := range forks{
-			v.status<-true
+			id: i, status: make(chan bool, 2),
 		}
-		
-		
-		//making 5 guys with with unique ID's and with their left and right forks
-		guys := make([]*guy, 5)
-		for i := 0; i < 5; i++ {
-			guys[i] = &guy{
-				id: i, forkleft: forks[i], forkright: forks[(i+1)%5]}
-				
-		}
-		//makes sure every guy eats 3 times
+	}
+	for _, v := range forks {
+		v.status <- true
+	}
+
+	//making 5 guys with with unique ID's and with their left and right forks
+	guys := make([]*guy, 5)
+	for i := 0; i < 5; i++ {
+		guys[i] = &guy{
+			id: i, forkleft: forks[i], forkright: forks[(i+1)%5]}
+
+	}
+	//makes sure every guy eats 3 times
+
+	for i := 0; i < 3; i++ {
+		for _, v := range guys {
+			go v.eat()
+			// time.Sleep(time.Second)
 
 		for i := 0; i<3; i++{
 			for _, v := range guys {
@@ -80,3 +84,5 @@ func begin() {
 			}
 		}
 	}
+	time.Sleep(time.Second)
+}
