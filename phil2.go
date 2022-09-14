@@ -17,8 +17,8 @@ type guy struct {
 
 func (g guy) eat() {
 
-	statusr := <- g.forkleft.status
-	statusl := <- g.forkright.status
+	statusr := <- g.forkright.status
+	statusl := <- g.forkleft.status
 
 	if(!statusr && statusl){
 		g.forkleft.status <- true
