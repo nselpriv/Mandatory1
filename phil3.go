@@ -15,7 +15,7 @@ type communication struct {
 }
 
 func randomTime(max int) {
-	time.Sleep(time.Millisecond * time.Duration(rand.Intn(max*1000)))
+	time.Sleep(time.Millisecond * time.Duration(rand.Intn(max*10)))
 }
 
 func fork(c communication) {
@@ -29,7 +29,7 @@ func fork(c communication) {
 
 func philosopher(right_com communication, left_com communication, id int) {
 	var times_eaten int
-	for times_eaten < 3 {
+	for times_eaten < 1000 {
 		// think
 		fmt.Printf("Philosopher %d thinks\n", id)
 		randomTime(2)

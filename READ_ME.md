@@ -1,0 +1,2 @@
+We expect the program to write to the console the status of each philosopher when it changes, i.e. "eats", "thinks" or "is full". The status is prefixed with the id of the philosopher ranging from 0-4.
+When every philosopher "is full" (has eaten 3 times), the program should write "All done." to the console and terminate.
